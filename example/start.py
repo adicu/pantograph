@@ -4,12 +4,8 @@ sys.path.append('..')
 import pantograph
 import tornado.web
 
-class MainHandler(tornado.web.RequestHandler):
-    def get(self):
-        self.write("Hello, World!")
-
 handlers = [
-    (r"/", MainHandler)
+    (r"/", pantograph.MainCanvasHandler, {"title" : "Pantograph Example"})
 ]
 
 if __name__ == '__main__':

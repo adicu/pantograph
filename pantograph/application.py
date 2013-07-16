@@ -5,26 +5,22 @@ import os
 from .handlers import *
 from . import static
 
-CONSTRUCTOR_SETTINGS = ["debug", "gzip"]
-
 class PantographApplication(tornado.web.Application):
-    def __init__(self, websock_handler, websock_handler_args = {}, 
-                 appname = "Pantograph", prefix = "/", **settings):
-        self.settings = settings
+    def __init__(self, websock_handlers, **settings):
+        constr_args = dict(settings)
+        
         if os.path.isfile("./config.json"):
             f = open("./config.json")
-            self.settings.update(json.load(f))
+            constr_args.update(json.load(f))
 
-        constr_args = {}
-        for key in CONSTRUCTOR_SETTINGS:
-            if key in self.settings:
-                constr_args[key] = self.settings[key]
         constr_args["static_path"] = os.path.dirname(static.__file__)
 
-        handlers = [
-            (prefix, MainCanvasHandler, {"title": appname}),
-            (prefix + "socket", websock_handler, websock_handler_args)
-        ]
+        handlers = []
+
+        for title, url, handler in websock_handlers:
+            handlers.append((url, MainCanvasHandler, 
+                            {"title" : title, "url" : url}))
+            handlers.append((os.path.join(url, "socket"), handler))
 
         tornado.web.Application.__init__(self, handlers, **constr_args)
 

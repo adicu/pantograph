@@ -14,5 +14,7 @@ class MyPantoHandler(tornado.websocket.WebSocketHandler):
         pass
 
 if __name__ == '__main__':
-    app = pantograph.PantographApplication(MyPantoHandler)
+    app = pantograph.PantographApplication([
+        ("Pantograph", "/", MyPantoHandler)
+    ])
     app.run()

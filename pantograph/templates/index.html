@@ -7,8 +7,12 @@
     <canvas id="pantograph-canvas"/>
     <script>
         var canvas = document.getElementById("pantograph-canvas")
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        var fullWidth = window.innerWidth;
+        var fullHeight = window.innerHeight;
+        canvas.width = {{width}};
+        canvas.height = {{height}};
+        var url = "{{url}}";
+        var title = "{{title}}";
     </script>
 </body>
 </html>

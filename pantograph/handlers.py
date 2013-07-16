@@ -1,7 +1,7 @@
 import tornado.web
 import tornado.template
 
-import templates
+from . import templates
 import os
 
 LOADER = tornado.template.Loader(os.path.dirname(templates.__file__))

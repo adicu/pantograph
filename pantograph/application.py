@@ -4,9 +4,7 @@ import json
 import os
 from .handlers import *
 
-CONSTRUCTOR_SETTINGS = ["debug", "gzip", "cookie_secret", "login_url",
-                        "xsrf_cookies", "autoescape", "template_path", 
-                        "static_path", "static_url_prefix"]
+CONSTRUCTOR_SETTINGS = ["debug", "gzip"]
 
 class PantographApplication(tornado.web.Application):
     def __init__(self, websock_handler, websock_handler_args = {}, 

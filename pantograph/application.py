@@ -2,13 +2,15 @@ import tornado.web
 import tornado.ioloop
 import json
 import os
+from .handlers import *
 
 CONSTRUCTOR_SETTINGS = ["debug", "gzip", "cookie_secret", "login_url",
                         "xsrf_cookies", "autoescape", "template_path", 
                         "static_path", "static_url_prefix"]
 
 class PantographApplication(tornado.web.Application):
-    def __init__(self, handlers, **settings):
+    def __init__(self, websock_handler, websock_handler_args = {}, 
+                 appname = "Pantograph", prefix = "/", **settings):
         self.settings = settings
         if os.path.isfile("./config.json"):
             f = open("./config.json")
@@ -18,6 +20,11 @@ class PantographApplication(tornado.web.Application):
         for key in CONSTRUCTOR_SETTINGS:
             if key in self.settings:
                 constr_args[key] = self.settings[key]
+
+        handlers = [
+            (prefix, MainCanvasHandler, {"title": appname}),
+            (prefix + "socket", websock_handler, websock_handler_args)
+        ]
 
         tornado.web.Application.__init__(self, handlers, **constr_args)
 

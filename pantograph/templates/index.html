@@ -2,10 +2,19 @@
 <html>
 <head>
     <title>{{title}}</title>
-    <link href="/static/css/style.css" rel="stylesheet" type="text/css"/>
+    <style>
+      body {
+        width: 100%;
+        height: 100%;
+      }
+      #pantograph-canvas {
+        margin-left: auto;
+        margin-right: auto;
+      }
+    </style>
 </head>
 <body>
-    <canvas id="pantograph-canvas"/>
+    <canvas id="pantograph-canvas"></canvas>
     <script>
         var canvas = document.getElementById("pantograph-canvas")
         var fullWidth = window.innerWidth;

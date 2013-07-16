@@ -19,7 +19,9 @@ class MainCanvasHandler(tornado.web.RequestHandler):
         if self.title in self.settings:
             width = self.settings[self.title].get("canvasWidth", width)
             height = self.settings[self.title].get("canvasHeight", height)
+
+        ws_url = os.path.join(self.url, "socket")
         
         self.write(t.generate(
-            title = self.title, url = self.url,
+            title = self.title, url = self.url, ws_url = ws_url,
             width = width, height = height))

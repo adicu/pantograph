@@ -3,6 +3,7 @@ import tornado.ioloop
 import json
 import os
 from .handlers import *
+from . import static
 
 CONSTRUCTOR_SETTINGS = ["debug", "gzip"]
 
@@ -18,6 +19,7 @@ class PantographApplication(tornado.web.Application):
         for key in CONSTRUCTOR_SETTINGS:
             if key in self.settings:
                 constr_args[key] = self.settings[key]
+        constr_args["static_path"] = os.path.dirname(static.__file__)
 
         handlers = [
             (prefix, MainCanvasHandler, {"title": appname}),

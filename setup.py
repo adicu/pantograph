@@ -10,6 +10,6 @@ setup(
     license = "MIT",
     
     include_package_data = True,
-    packages = ["pantograph"],
+    packages = ["pantograph", "pantograph.templates", "pantograph.static"],
     install_requires = ["tornado>=2.2"]
 )

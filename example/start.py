@@ -1,6 +1,4 @@
 import sys
-sys.path.append('..')
-
 import pantograph
 import tornado.web
 import tornado.websocket

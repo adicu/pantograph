@@ -1,2 +1,2 @@
 from .application import PantographApplication
-from .handlers import MainCanvasHandler
+from .handlers import PantographHandler

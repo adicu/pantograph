@@ -17,10 +17,11 @@ class PantographApplication(tornado.web.Application):
 
         handlers = []
 
-        for title, url, handler in websock_handlers:
-            handlers.append((url, MainCanvasHandler, 
-                            {"title" : title, "url" : url}))
-            handlers.append((os.path.join(url, "socket"), handler))
+        for name, url, ws_handler in websock_handlers:
+            handlers.append((url, MainPageHandler, 
+                            {"title" : name, "url" : url}))
+            handlers.append((os.path.join(url, "socket"), ws_handler,
+                            {"name": name}))
 
         tornado.web.Application.__init__(self, handlers, **constr_args)
 

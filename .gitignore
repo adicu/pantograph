@@ -1,3 +1,6 @@
 *.pyc
 /example/config.json
 /example/env
+/build
+/dist
+*.egg-info

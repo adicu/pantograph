@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name = "pantograph",
@@ -10,6 +10,6 @@ setup(
     license = "MIT",
     
     include_package_data = True,
-    packages = ["pantograph", "pantograph.templates", "pantograph.static"],
+    packages = find_packages(exclude=["example"]),
     install_requires = ["tornado>=2.2"]
 )

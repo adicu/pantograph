@@ -8,7 +8,8 @@ setup(
     description = "Python library for drawing on HTML5 canvas",
     url = "https://github.com/adicu/pantograph",
     license = "MIT",
-
+    
+    include_package_data = True,
     packages = ["pantograph"],
     install_requires = ["tornado>=2.2"]
 )

@@ -2,11 +2,14 @@ import tornado.web
 import tornado.template
 
 import templates
+import os
+
+LOADER = tornado.template.Loader(os.path.dirname(templates.__file__))
 
 class MainCanvasHandler(tornado.web.RequestHandler):
     def initialize(self, title = "Pantograph"):
         self.title = title
 
     def get(self):
-        t = tornado.template.Template(templates.MAIN_CANVAS)
+        t = LOADER.load("index.html")
         self.write(t.generate(title = self.title))

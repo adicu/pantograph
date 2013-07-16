@@ -1,2 +1,3 @@
 *.pyc
 /example/config.json
+/example/env

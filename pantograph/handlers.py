@@ -7,6 +7,7 @@ import random
 import json
 import os
 import datetime
+from collections import namedtuple
 
 from . import templates
 
@@ -34,6 +35,10 @@ class MainPageHandler(tornado.web.RequestHandler):
 
 DEFAULT_INTERVAL = 100
 
+InputEvent = namedtuple("InputEvent", ["type", "x", "y", "button", 
+                                       "alt_key", "ctrl_key", "meta_key",
+                                       "shift_key", "key_code"])
+
 class PantographHandler(tornado.websocket.WebSocketHandler):
     def initialize(self, name):
         self.name = name
@@ -51,16 +56,18 @@ class PantographHandler(tornado.websocket.WebSocketHandler):
 
     def on_message(self, raw_message):
         message = json.loads(raw_message)
-        event_type = message.get("event_type")
+        event_type = message.get("type")
         event_callbacks = {
-            "mouse_press": self.on_mouse_press,
-            "mouse_release": self.on_mouse_release,
-            "mouse_move": self.on_mouse_move,
-            "mouse_drag": self.on_mouse_drag,
-            "key_press": self.on_key_press,
-            "key_release": self.on_key_release,
+            "mousedown": self.on_mouse_down,
+            "mouseup": self.on_mouse_up,
+            "mousemove": self.on_mouse_move,
+            "click": self.on_click,
+            "dblclick": self.on_dbl_click,
+            "keydown": self.on_key_down,
+            "keyup": self.on_key_up,
+            "keypress": self.on_key_press
         }
-        event_callbacks[event_type](message.get("event"))
+        event_callbacks[event_type](InputEvent(**message))
 
     def timeout(self):
         self.update()
@@ -70,20 +77,26 @@ class PantographHandler(tornado.websocket.WebSocketHandler):
     def update(self):
         pass
 
-    def on_mouse_press(self, event):
+    def on_mouse_down(self, event):
         pass
 
-    def on_mouse_release(event):
+    def on_mouse_up(self, event):
         pass
-
-    def on_key_press(self, event):
-        pass
-
-    def on_key_release(self, event):
-        pass
-
+    
     def on_mouse_move(self, event):
         pass
 
-    def on_mouse_drag(self, event):
+    def on_click(self, event):
+        pass
+
+    def on_dbl_click(self, event):
+        pass
+
+    def on_key_down(self, event):
+        pass
+
+    def on_key_up(self, event):
+        pass
+
+    def on_key_press(self, event):
         pass

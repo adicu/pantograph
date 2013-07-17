@@ -2,8 +2,9 @@ import sys
 import pantograph
 
 class MyPantoHandler(pantograph.PantographHandler):
-    def on_mouse_press(self, event):
-        print("Mouse pressed")
+    def on_click(self, event):
+        mess = "Button %d clicked at %d, %d" % (event.button, event.x, event.y)
+        print(mess)
 
 if __name__ == '__main__':
     app = pantograph.PantographApplication([

@@ -15,7 +15,7 @@
 </head>
 <body>
     <canvas id="pantograph-canvas"></canvas>
-    <script>
+    <script type="text/javascript">
         var canvas = document.getElementById("pantograph-canvas")
         var fullWidth = window.innerWidth;
         var fullHeight = window.innerHeight;
@@ -25,5 +25,6 @@
         var ws_url = "ws://" + window.location.host + "{{ws_url}}";
         var title = "{{title}}";
     </script>
+    <script type="text/javascript" src="/static/pantograph.js"></script>
 </body>
 </html>

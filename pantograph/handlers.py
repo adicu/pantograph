@@ -106,6 +106,16 @@ class PantographHandler(tornado.websocket.WebSocketHandler):
     def fill_circle(self, x, y, radius, color = "#000"):
         self.draw("fillCircle", x=x, y=y, radius=radius, color=color)
 
+    def draw_line(self, startX, startY, endX, endY, color = "#000"):
+        self.draw("drawLine", startX=startX, startY=startY, 
+                              endX=endX, endY=endY, color=color)
+
+    def fill_polygon(self, points, color = "#000"):
+        self.draw("fillPolygon", points=points, color=color)
+    
+    def draw_polygon(self, points, color = "#000"):
+        self.draw("drawPolygon", points=points, color=color)
+
     def timer_tick(self):
         self.update()
         delta = datetime.timedelta(milliseconds = self.interval)

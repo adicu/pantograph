@@ -82,6 +82,40 @@ pantograph.fillOval = function(ctx, oval) {
 	ctx.fill();
 }
 
+pantograph.drawLine = function(ctx, line) {
+	ctx.beginPath();
+	ctx.moveTo(line.startX, line.startY);
+	ctx.lineTo(line.endX, line.endY);
+	ctx.strokeStyle = line.color || "#000";
+	ctx.stroke();
+}
+
+pantograph.setupPolygon = function(ctx, polygon) {
+	var startX = polygon.points[0][0];
+	var startY = polygon.points[0][1];
+
+	ctx.beginPath();
+	ctx.moveTo(startX, startY);
+
+	polygon.points.slice(1).forEach(function (pt) {
+		ctx.lineTo(pt[0], pt[1]);
+	});
+
+	ctx.lineTo(startX, startY);
+}
+
+pantograph.drawPolygon = function(ctx, polygon) {
+	pantograph.setupPolygon(ctx, polygon);
+	ctx.strokeStyle = polygon.color || "#000";
+	ctx.stroke();
+}
+
+pantograph.fillPolygon = function(ctx, polygon) {
+	pantograph.setupPolygon(ctx, polygon);
+	ctx.fillStyle = polygon.color || "#000";
+	ctx.fill();
+}
+
 pantograph.socket.onopen = function(e) {
 	canvas.onmousedown = pantograph.input_handler;
 	canvas.onmouseup   = pantograph.input_handler;

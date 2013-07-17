@@ -20,6 +20,10 @@ class BouncingBallHandler(pantograph.PantographHandler):
 
         self.clear_rect(0, 0, self.width, self.height)
         self.fill_circle(self.x, self.y, 10, "#f00")
+        self.draw_polygon([
+            (0, self.height / 2), 
+            (self.width / 2, 0), 
+            (self.width / 2, self.height)])
 
 
 if __name__ == '__main__':

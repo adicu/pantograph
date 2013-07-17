@@ -33,7 +33,7 @@ class MainPageHandler(tornado.web.RequestHandler):
             title = self.title, url = self.url, ws_url = ws_url,
             width = width, height = height))
 
-DEFAULT_INTERVAL = 100
+DEFAULT_INTERVAL = 10
 
 InputEvent = namedtuple("InputEvent", ["type", "x", "y", "button", 
                                        "alt_key", "ctrl_key", "meta_key",

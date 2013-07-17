@@ -46,33 +46,73 @@ class PantographHandler(tornado.websocket.WebSocketHandler):
         if self.name in self.settings:
             interval = self.settings[self.name].get("timer_interval", interval)
         self.interval = interval
-
-    def open(self):
+    
+    def on_canvas_init(self, message):
+        self.width = message["width"]
+        self.height = message["height"]
+        self.setup()
         # randomize the first timeout so we don't get every timer
         # expiring at the same time
         interval = random.randint(1, self.interval)
         delta = datetime.timedelta(milliseconds = interval)
-        IOLoop.current().add_timeout(delta, self.timeout)
+        self.timeout = IOLoop.current().add_timeout(delta, self.timer_tick)
+
+    def on_close(self):
+        IOLoop.current().remove_timeout(self.timeout)
 
     def on_message(self, raw_message):
         message = json.loads(raw_message)
         event_type = message.get("type")
-        event_callbacks = {
-            "mousedown": self.on_mouse_down,
-            "mouseup": self.on_mouse_up,
-            "mousemove": self.on_mouse_move,
-            "click": self.on_click,
-            "dblclick": self.on_dbl_click,
-            "keydown": self.on_key_down,
-            "keyup": self.on_key_up,
-            "keypress": self.on_key_press
-        }
-        event_callbacks[event_type](InputEvent(**message))
 
-    def timeout(self):
+        if event_type == "setbounds":
+            self.on_canvas_init(message)
+        else:
+            event_callbacks = {
+                "mousedown": self.on_mouse_down,
+                "mouseup": self.on_mouse_up,
+                "mousemove": self.on_mouse_move,
+                "click": self.on_click,
+                "dblclick": self.on_dbl_click,
+                "keydown": self.on_key_down,
+                "keyup": self.on_key_up,
+                "keypress": self.on_key_press
+            }
+            event_callbacks[event_type](InputEvent(**message))
+
+    def draw(self, operation, **kwargs):
+        message = dict(kwargs)
+        message['operation'] = operation
+        raw_message = json.dumps(message)
+        self.write_message(raw_message)
+
+    def draw_rect(self, x, y, width, height, color = "#000"):
+        self.draw("drawRect", x=x, y=y, width=width, height=height, color=color)
+
+    def fill_rect(self, x, y, width, height, color = "#000"):
+        self.draw("fillRect", x=x, y=y, width=width, height=height, color=color)
+
+    def clear_rect(self, x, y, width, height):
+        self.draw("clearRect", x=x, y=y, width=width, height=height)
+    
+    def draw_oval(self, x, y, width, height, color = "#000"):
+        self.draw("drawOval", x=x, y=y, width=width, height=height, color=color)
+    
+    def fill_oval(self, x, y, width, height, color = "#000"):
+        self.draw("fillOval", x=x, y=y, width=width, height=height, color=color)
+
+    def draw_circle(self, x, y, radius, color = "#000"):
+        self.draw("drawCircle", x=x, y=y, radius=radius, color=color)
+    
+    def fill_circle(self, x, y, radius, color = "#000"):
+        self.draw("fillCircle", x=x, y=y, radius=radius, color=color)
+
+    def timer_tick(self):
         self.update()
         delta = datetime.timedelta(milliseconds = self.interval)
-        IOLoop.current().add_timeout(delta, self.timeout)
+        self.timeout = IOLoop.current().add_timeout(delta, self.timer_tick)
+
+    def setup(self):
+        pass
 
     def update(self):
         pass

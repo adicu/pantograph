@@ -3,6 +3,10 @@ var pantograph = {};
 pantograph.socket = new WebSocket(ws_url);
 
 pantograph.context = canvas.getContext("2d");
+pantograph.hiddenCanvas = document.createElement("canvas");
+pantograph.hiddenCanvas.width = canvas.width;
+pantograph.hiddenCanvas.height = canvas.height;
+pantograph.hiddenContext = pantograph.hiddenCanvas.getContext("2d");
 
 pantograph.input_handler = function (e) {
 	var ws = pantograph.socket;
@@ -20,8 +24,17 @@ pantograph.input_handler = function (e) {
 	ws.send(JSON.stringify(message));
 }
 
-pantograph.performCanvasOp = function(mess, operation) {
+pantograph.redrawCanvas = function(mess, operation) {
 	var ctx = pantograph.context;
+	var hidCtx = pantograph.hiddenContext;
+	var hidCvs = pantograph.hiddenCanvas;
+
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.drawImage(hidCvs, 0, 0);
+}
+
+pantograph.performCanvasOp = function(mess, operation) {
+	var ctx = pantograph.hiddenContext;
 	ctx.save();
 	operation(ctx, mess);
 	ctx.restore();
@@ -134,5 +147,8 @@ pantograph.socket.onopen = function(e) {
 
 pantograph.socket.onmessage = function(e) {
 	message = JSON.parse(e.data);
-	pantograph.performCanvasOp(message, pantograph[message.operation]);
+	if (message.operation == "redraw")
+		pantograph.redrawCanvas();
+	else
+		pantograph.performCanvasOp(message, pantograph[message.operation]);
 }

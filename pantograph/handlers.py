@@ -51,6 +51,7 @@ class PantographHandler(tornado.websocket.WebSocketHandler):
         self.width = message["width"]
         self.height = message["height"]
         self.setup()
+        self.draw("redraw")
         # randomize the first timeout so we don't get every timer
         # expiring at the same time
         interval = random.randint(1, self.interval)
@@ -118,6 +119,7 @@ class PantographHandler(tornado.websocket.WebSocketHandler):
 
     def timer_tick(self):
         self.update()
+        self.draw("redraw")
         delta = datetime.timedelta(milliseconds = self.interval)
         self.timeout = IOLoop.current().add_timeout(delta, self.timer_tick)
 

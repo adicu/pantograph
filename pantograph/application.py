@@ -29,3 +29,8 @@ class PantographApplication(tornado.web.Application):
         self.listen(port, address)
         print("Pantograph now running at http://" + address + ":" + str(port))
         tornado.ioloop.IOLoop.instance().start()
+
+class SimplePantographApplication(PantographApplication):
+    def __init__(self, handler, **settings):
+        PantographApplication.__init__(
+            self, [(handler.__name__, "/", handler)], **settings)

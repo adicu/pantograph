@@ -44,13 +44,25 @@ if __name__ == '__main__':
 
 This class is the main application, which can hold one or more handlers.
 The required constructor argument is a list of 3-tuples containing the name
-of the handler, the url, and the handler class.
+of the handler, the url, and the handler class. For instance,
+
+```python
+pantograph.PantographApplication([
+	("Pantograph", "/", pantograph.PantographHandler)
+])
+```
 
 It has one public method `run` which starts the application server. 
 By default, the server runs on port 8080 and is bound to localhost.
 You can, however, override these defaults by providing extra arguments.
 For instance, if you replaced `app.run()` with `app.run("0.0.0.0", 8000)`,
 the server would be publically accessible on port 8000.
+
+### SimplePantographApplication
+
+A subclass of `PantographApplication` which takes in a single handler and
+sets up a route to it from the root url. The name is take from the class name
+of the handler.
 
 ### PantographHandler
 
@@ -123,3 +135,25 @@ The callbacks correspond directly to HTML DOM events.
  * `on_key_down` - Called when a keyboard key is pushed down
  * `on_key_up` - Called when a key is released
  * `on_key_press` - Called periodically while key is held down
+
+#### Instance variables
+
+ * `width` - The width of the canvas
+ * `height` - The height of the canvas
+
+## Configuration
+
+You can configure your application by putting a "config.json" file in your
+current directory. The json file should contain a dictionary which can have
+any of the following keys.
+
+ * `timer_interval` - The number of milliseconds between each call to the
+ `update` method.
+ * `width` - The width of the canvas on the screen. This can be an integer or
+ the string "fullWidth" to fill up the entire width of the browser.
+ * `height` - The height of the canvas on the screen. This can be an integer
+ or the string "fullHeight" to fill up the entire height of the browser.
+
+If you have multiple handlers in your application, you can configure each 
+handler separately by associating a key with the handler's name to a nested 
+dictionary containing any of the variables above.

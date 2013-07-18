@@ -6,6 +6,8 @@
       body {
         width: 100%;
         height: 100%;
+        padding: 0px;
+        margin: 0px;
       }
       #pantograph-canvas {
         margin-left: auto;
@@ -17,8 +19,9 @@
     <canvas id="pantograph-canvas"></canvas>
     <script type="text/javascript">
         var canvas = document.getElementById("pantograph-canvas")
-        var fullWidth = window.innerWidth;
-        var fullHeight = window.innerHeight;
+        var trimBy = 10;
+        var fullWidth = document.documentElement.clientWidth - trimBy;
+        var fullHeight = document.documentElement.clientHeight - trimBy;
         canvas.width = {{width}};
         canvas.height = {{height}};
         var url = "{{url}}";

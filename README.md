@@ -99,3 +99,29 @@ canvas. The `points` argument is a list of (x, y) pairs.
 
 `fill_polygon(self, points, color = "#000")` - Draw a filled polygon on the
 canvas.
+
+#### Event Callbacks
+
+All event callbacks are passed an `InputEvent` object which contains the
+following fields.
+
+ * `x` - The x position of the mouse
+ * `y` - The y position of the mouse
+ * `button` - Which button on the mouse was pressed (0 - left, 1 - middle, 2 - right)?
+ * `alt_key` - Was the alt key held down?
+ * `ctrl_key` - Was the ctrl key held down?
+ * `meta_key` - Was the meta (Windows) key held down?
+ * `shift_key` - Was the shift key held down?
+ * `key_code` - The key code
+
+The following are the callback methods which can be overloaded. 
+The callbacks correspond directly to HTML DOM events.
+
+ * `on_mouse_down` - Called when a mouse button is pressed down
+ * `on_mouse_up` - Called when a mouse button is released
+ * `on_mouse_move` - Called when the mouse is moved across the canvas
+ * `on_click` - Called when the mouse is clicked (pressed and released)
+ * `on_dbl_click` - Called when the mouse is double-clicked
+ * `on_key_down` - Called when a keyboard key is pushed down
+ * `on_key_up` - Called when a key is released
+ * `on_key_press` - Called periodically while key is held down

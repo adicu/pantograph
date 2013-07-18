@@ -14,7 +14,7 @@ the only dependency.
 import pantograph
 import random
 
-class BouncingBallHandler(pantograph.PantographHandler):
+class BouncingBall(pantograph.PantographHandler):
     def setup(self):
         self.x = 100
         self.y = 100

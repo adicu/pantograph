@@ -34,9 +34,7 @@ class BouncingBallHandler(pantograph.PantographHandler):
         self.fill_circle(self.x, self.y, 10, "#f00")
 
 if __name__ == '__main__':
-    app = pantograph.PantographApplication([
-        ("BouncingBall", "/", BouncingBallHandler)
-    ])
+    app = pantograph.SimplePantographApplication(BouncingBall)
     app.run()
 ```
 

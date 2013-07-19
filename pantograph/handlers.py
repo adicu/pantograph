@@ -123,8 +123,10 @@ class PantographHandler(tornado.websocket.WebSocketHandler):
 
         if os.path.isfile(handler_path):
             img_src = os.path.join("/img", self.name, img_name)
-        else:
+        elif os.path.isfile(app_path):
             img_src = os.path.join("/img", img_name)
+        else:
+            raise FileNotFoundError("Could not find " + img_name)
         
         self.draw("drawImage", src=img_src, x=x, y=y, 
                                width=width, height=height)

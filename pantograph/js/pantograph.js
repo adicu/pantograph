@@ -130,7 +130,7 @@ pantograph.fillPolygon = function(ctx, polygon) {
 }
 
 pantograph.drawImage = function(ctx, imgInfo) {
-	var img = document.createElement("img");
+	var img = new Image();
 	img.src = imgInfo.src;
 	
 	var width = imgInfo.width || img.width;

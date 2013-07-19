@@ -110,6 +110,14 @@ canvas. The `points` argument is a list of (x, y) pairs.
 `fill_polygon(self, points, color = "#000")` - Draw a filled polygon on the
 canvas.
 
+`draw_image(self, name, x, y, width=None, height=None)` - Draw an image on
+the canvas. The `name` parameter is the name of the image, pantograph will
+search for an image by that name in your current directory at
+"images/*handler_name*/*name*" and then at "images/*name*" where *handler_name*
+is the name of your handler, and *name* is the name passed the function.
+If you do not supply a width or a height, the actual width and height of the
+image will be used.
+
 #### Event Callbacks
 
 All event callbacks are passed an `InputEvent` object which contains the

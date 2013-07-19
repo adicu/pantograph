@@ -3,7 +3,7 @@ import tornado.ioloop
 import json
 import os
 from .handlers import *
-from . import static
+from . import js
 
 class PantographApplication(tornado.web.Application):
     def __init__(self, websock_handlers, **settings):
@@ -13,9 +13,12 @@ class PantographApplication(tornado.web.Application):
             f = open("./config.json")
             constr_args.update(json.load(f))
 
-        constr_args["static_path"] = os.path.dirname(static.__file__)
+        js_path = os.path.dirname(js.__file__)
 
-        handlers = []
+        handlers = [
+            (r"/js/(.*\.js)", tornado.web.StaticFileHandler, {"path":  js_path}),
+            (r"/img/(.*)", tornado.web.StaticFileHandler, {"path": "./images"})
+        ]
 
         for name, url, ws_handler in websock_handlers:
             handlers.append((url, MainPageHandler, 

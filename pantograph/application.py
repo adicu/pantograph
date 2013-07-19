@@ -22,7 +22,7 @@ class PantographApplication(tornado.web.Application):
 
         for name, url, ws_handler in websock_handlers:
             handlers.append((url, MainPageHandler, 
-                            {"title" : name, "url" : url}))
+                            {"name" : name, "url" : url}))
             handlers.append((os.path.join(url, "socket"), ws_handler,
                             {"name": name}))
 

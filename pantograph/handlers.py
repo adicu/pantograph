@@ -117,6 +117,19 @@ class PantographHandler(tornado.websocket.WebSocketHandler):
     def draw_polygon(self, points, color = "#000"):
         self.draw("drawPolygon", points=points, color=color)
 
+    def draw_image(self, img_name, x, y, width=None, height=None):
+        app_path = os.path.join("./images", img_name)
+        handler_path = os.path.join("./images", self.name, img_name)
+
+        if os.path.isfile(handler_path):
+            img_src = os.path.join("/img", self.name, img_name)
+        else:
+            img_src = os.path.join("/img", img_name)
+        
+        self.draw("drawImage", src=img_src, x=x, y=y, 
+                               width=width, height=height)
+
+
     def timer_tick(self):
         self.update()
         self.draw("redraw")

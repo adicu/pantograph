@@ -129,6 +129,16 @@ pantograph.fillPolygon = function(ctx, polygon) {
 	ctx.fill();
 }
 
+pantograph.drawImage = function(ctx, imgInfo) {
+	var img = document.createElement("img");
+	img.src = imgInfo.src;
+	
+	var width = imgInfo.width || img.width;
+	var height = imgInfo.height || img.height;
+
+	ctx.drawImage(img, imgInfo.x, imgInfo.y, width, height);
+}
+
 pantograph.socket.onopen = function(e) {
 	canvas.onmousedown = pantograph.input_handler;
 	canvas.onmouseup   = pantograph.input_handler;

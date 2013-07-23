@@ -13,6 +13,15 @@ class Shape(object):
     def translate(self, dx, dy):
         raise NotImplementedError
 
+    def rotate(self, theta):
+        if theta == 0:
+            self.rotation = None
+        else:
+            rect = self.get_bounding_rect()
+            rotx = (rect.left + rect.right) / 2
+            roty = (rect.top + rect.bottom) / 2
+            self.rotation = dict(x=rotx, y=roty, theta=theta)
+
     def intersects(self, other):
         recta = self.get_bounding_rect()
         rectb = other.get_bounding_rect()
@@ -63,6 +72,7 @@ class Shape(object):
         return recta.left < rectb.left and recta.right > rectb.right and \
                 recta.top < rectb.top and recta.bottom > rectb.bottom
 
+
 class SimpleShape(Shape):
     def __init__(self, x, y, width, height, fill_color=None, line_color=None):
         self.x = x
@@ -71,7 +81,7 @@ class SimpleShape(Shape):
         self.height = height
         self.fill_color = fill_color
         self.line_color = line_color
-
+        self.rotation = None
     
     def get_bounding_rect(self):
         return BoundingRect(self.x, self.y, 
@@ -87,18 +97,18 @@ class Rect(SimpleShape):
         if self.fill_color is not None:
             canvas.fill_rect(self.x, self.y, 
                              self.width, self.height, 
-                             self.fill_color)
+                             self.fill_color, rotate=self.rotation)
         if self.line_color is not None:
             canvas.draw_rect(self.x, self.y, 
                              self.width, self.height, 
-                             self.line_color)
+                             self.line_color, rotate=self.rotation)
     
 class Oval(SimpleShape):
     def draw(self, canvas):
         if self.fill_color is not None:
             canvas.fill_oval(self.x, self.y, 
                              self.width, self.height, 
-                             self.fill_color)
+                             self.fill_color, rotate=self.rotation)
         if self.line_color is not None:
             canvas.draw_oval(self.x, self.y, 
                              self.width, self.height, 
@@ -129,7 +139,7 @@ class Image(SimpleShape):
 
     def draw(self, canvas):
         canvas.draw_image(self.img_name, self.x, self.y, 
-                          self.width, self.height)
+                          self.width, self.height, rotate = self.rotation)
 
 class Line(Shape):
     def __init__(self, startx, starty, endx, endy, color = None):
@@ -141,7 +151,8 @@ class Line(Shape):
 
     def draw(self, canvas):
         if color is not None:
-            canvas.draw_line(self.startx, self.starty, self.endx, seld.endy)
+            canvas.draw_line(self.startx, self.starty, self.endx, seld.endy, 
+                             rotate = self.rotation)
 
     def get_bounding_rect(self):
         if self.startx < self.endx:
@@ -187,9 +198,10 @@ class Polygon(Shape):
 
     def draw(self, canvas):
         if self.line_color is not None:
-            canvas.draw_polygon(self.points, self.line_color)
-        elif self.fill_color is not None:
-            canvas.fill_polygon(self.points, self.fill_color)
+            canvas.draw_polygon(self.points, self.line_color, rotate = self.rotation)
+        
+        if self.fill_color is not None:
+            canvas.fill_polygon(self.points, self.fill_color, rotate = self.rotation)
 
     def get_bounding_rect(self):
         return BoundingRect(self.minx, self.miny, self.maxx, self.maxy)

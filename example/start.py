@@ -1,12 +1,15 @@
 import sys
 import pantograph
 import random
+import math
 
 class BouncingShape(object):
-    def __init__(self, shape, xvel, yvel):
+    def __init__(self, shape):
         self.shape = shape
-        self.xvel = xvel
-        self.yvel = yvel
+        self.theta = 0
+        self.xvel = random.randint(1, 5)
+        self.yvel = random.randint(1, 5)
+        self.rvel = (math.pi / 2) * random.random()
 
     def update(self, canvas):
         rect = self.shape.get_bounding_rect()
@@ -16,7 +19,12 @@ class BouncingShape(object):
         if rect.top <= 0 or rect.bottom >= canvas.height:
             self.yvel *= -1
 
+        self.theta += self.rvel
+        if self.theta > math.pi:
+            self.theta -= 2 * math.pi
+
         self.shape.translate(self.xvel, self.yvel)
+        self.shape.rotate(self.theta)
         self.shape.draw(canvas)
 
 class BouncingBallDemo(pantograph.PantographHandler):
@@ -39,9 +47,7 @@ class BouncingBallDemo(pantograph.PantographHandler):
             ])
         ]
 
-        self.shapes = [BouncingShape(shp, random.randint(1, 5),
-                                          random.randint(1, 5))
-                        for shp in static_shapes]
+        self.shapes = [BouncingShape(shp) for shp in static_shapes]
 
     def update(self):
         self.clear_rect(0, 0, self.width, self.height)

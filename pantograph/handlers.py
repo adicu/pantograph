@@ -86,38 +86,46 @@ class PantographHandler(tornado.websocket.WebSocketHandler):
         raw_message = json.dumps(message)
         self.write_message(raw_message)
 
-    def draw_rect(self, x, y, width, height, color = "#000"):
-        self.draw("drawRect", x=x, y=y, width=width, height=height, color=color)
+    def draw_rect(self, x, y, width, height, color = "#000", **extra):
+        self.draw("drawRect", x=x, y=y, width=width, height=height, 
+                              color=color, **extra)
 
-    def fill_rect(self, x, y, width, height, color = "#000"):
-        self.draw("fillRect", x=x, y=y, width=width, height=height, color=color)
+    def fill_rect(self, x, y, width, height, color = "#000", **extra):
+        self.draw("fillRect", x=x, y=y, width=width, height=height, 
+                              color=color, **extra)
 
-    def clear_rect(self, x, y, width, height):
-        self.draw("clearRect", x=x, y=y, width=width, height=height)
+    def clear_rect(self, x, y, width, height, **extra):
+        self.draw("clearRect", x=x, y=y, width=width, height=height,
+                               **extra)
     
-    def draw_oval(self, x, y, width, height, color = "#000"):
-        self.draw("drawOval", x=x, y=y, width=width, height=height, color=color)
+    def draw_oval(self, x, y, width, height, color = "#000", **extra):
+        self.draw("drawOval", x=x, y=y, width=width, height=height, 
+                              color=color, **extra)
     
-    def fill_oval(self, x, y, width, height, color = "#000"):
-        self.draw("fillOval", x=x, y=y, width=width, height=height, color=color)
+    def fill_oval(self, x, y, width, height, color = "#000", **extra):
+        self.draw("fillOval", x=x, y=y, width=width, height=height, 
+                              color=color, **extra)
 
-    def draw_circle(self, x, y, radius, color = "#000"):
-        self.draw("drawCircle", x=x, y=y, radius=radius, color=color)
+    def draw_circle(self, x, y, radius, color = "#000", **extra):
+        self.draw("drawCircle", x=x, y=y, radius=radius, 
+                                color=color, **extra)
     
-    def fill_circle(self, x, y, radius, color = "#000"):
-        self.draw("fillCircle", x=x, y=y, radius=radius, color=color)
+    def fill_circle(self, x, y, radius, color = "#000", **extra):
+        self.draw("fillCircle", x=x, y=y, radius=radius, 
+                                color=color, **extra)
 
-    def draw_line(self, startX, startY, endX, endY, color = "#000"):
+    def draw_line(self, startX, startY, endX, endY, color = "#000", **extra):
         self.draw("drawLine", startX=startX, startY=startY, 
-                              endX=endX, endY=endY, color=color)
+                              endX=endX, endY=endY, color=color,
+                              **extra)
 
-    def fill_polygon(self, points, color = "#000"):
-        self.draw("fillPolygon", points=points, color=color)
+    def fill_polygon(self, points, color = "#000", **extra):
+        self.draw("fillPolygon", points=points, color=color, **extra)
     
-    def draw_polygon(self, points, color = "#000"):
-        self.draw("drawPolygon", points=points, color=color)
+    def draw_polygon(self, points, color = "#000", **extra):
+        self.draw("drawPolygon", points=points, color=color, **extra)
 
-    def draw_image(self, img_name, x, y, width=None, height=None):
+    def draw_image(self, img_name, x, y, width=None, height=None, **extra):
         app_path = os.path.join("./images", img_name)
         handler_path = os.path.join("./images", self.name, img_name)
 
@@ -129,7 +137,8 @@ class PantographHandler(tornado.websocket.WebSocketHandler):
             raise FileNotFoundError("Could not find " + img_name)
         
         self.draw("drawImage", src=img_src, x=x, y=y, 
-                               width=width, height=height)
+                               width=width, height=height,
+                               **extra)
 
 
     def timer_tick(self):

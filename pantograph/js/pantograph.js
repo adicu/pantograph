@@ -43,6 +43,11 @@ pantograph.performCanvasOp = function(mess, operation) {
 	var ctx = pantograph.hiddenContext;
 	reqAnimFrame(function () {
 		ctx.save();
+		if (mess.rotate) {
+			ctx.translate(mess.rotate.x, mess.rotate.y);
+			ctx.rotate(mess.rotate.theta);
+			ctx.translate(-mess.rotate.x, -mess.rotate.y);
+		}
 		operation(ctx, mess);
 		ctx.restore();
 	});

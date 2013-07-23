@@ -1,3 +1,7 @@
+var reqAnimFrame = window.requestAnimationFrame ||
+				   window.mozRequestAnimationFrame ||
+				   window.webkitRequestAnimationFrame;
+
 var pantograph = {};
 
 pantograph.socket = new WebSocket(ws_url);
@@ -28,16 +32,20 @@ pantograph.redrawCanvas = function(mess, operation) {
 	var ctx = pantograph.context;
 	var hidCtx = pantograph.hiddenContext;
 	var hidCvs = pantograph.hiddenCanvas;
-
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	ctx.drawImage(hidCvs, 0, 0);
+	
+	reqAnimFrame(function () {
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		ctx.drawImage(hidCvs, 0, 0);
+	});
 }
 
 pantograph.performCanvasOp = function(mess, operation) {
 	var ctx = pantograph.hiddenContext;
-	ctx.save();
-	operation(ctx, mess);
-	ctx.restore();
+	reqAnimFrame(function () {
+		ctx.save();
+		operation(ctx, mess);
+		ctx.restore();
+	});
 }
 
 pantograph.fillRect = function (ctx, rect) {

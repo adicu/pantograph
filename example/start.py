@@ -32,7 +32,11 @@ class BouncingBallDemo(pantograph.PantographHandler):
                 (10, 10),
                 (5, 20),
                 (30, 30)
-            ], "#00f")
+            ], "#00f"),
+            pantograph.CompoundShape([
+                pantograph.Rect(15, 15, 10, 10, "#0ff"),
+                pantograph.Circle(20, 20, 5, "#ff0")
+            ])
         ]
 
         self.shapes = [BouncingShape(shp, random.randint(1, 5),

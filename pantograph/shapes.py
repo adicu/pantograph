@@ -172,21 +172,10 @@ class Polygon(Shape):
         self.line_color = line_color
         self.fill_color = fill_color
         
-        self.minx = points[0][0]
-        self.maxx = points[0][0]
-        self.miny = points[0][1]
-        self.maxy = points[0][1]
-
-        for (x, y) in points[1:]:
-            if x < self.minx:
-                self.minx = x
-            if x > self.maxx:
-                self.maxx = x
-            
-            if y < self.miny:
-                self.miny = y
-            if x > self.maxy:
-                self.maxy = y
+        self.minx = min(pt[0] for pt in points)
+        self.maxx = max(pt[0] for pt in points)
+        self.miny = min(pt[1] for pt in points)
+        self.maxy = max(pt[1] for pt in points)
 
     def translate(self, dx, dy):
         self.minx += dx
@@ -204,3 +193,28 @@ class Polygon(Shape):
 
     def get_bounding_rect(self):
         return BoundingRect(self.minx, self.miny, self.maxx, self.maxy)
+
+class CompoundShape(Shape):
+    def __init__(self, shapes):
+        self.shapes = shapes
+        rects = [shp.get_bounding_rect() for shp in shapes]
+        
+        self.left = min(rct.left for rct in rects)
+        self.right = max(rct.right for rct in rects)
+        self.top = min(rct.top for rct in rects)
+        self.bottom = max(rct.bottom for rct in rects)
+
+    def translate(self, dx, dy):
+        for shp in self.shapes:
+            shp.translate(dx, dy)
+        self.left += dx
+        self.right += dx
+        self.top += dy
+        self.bottom += dy
+
+    def get_bounding_rect(self):
+        return BoundingRect(self.left, self.top, self.right, self.bottom)
+
+    def draw(self, canvas):
+        for shp in self.shapes:
+            shp.draw(canvas)

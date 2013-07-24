@@ -2,6 +2,7 @@ import sys
 import pantograph
 import random
 import math
+import itertools
 
 class BouncingShape(object):
     def __init__(self, shape):
@@ -37,9 +38,9 @@ class BouncingBallDemo(pantograph.PantographHandler):
             pantograph.Rect(120, 150, 20, 20, "#f00"),
             pantograph.Circle(15, 300, 10, "#0f0"),
             pantograph.Polygon([
-                (10, 10),
-                (5, 20),
-                (30, 30)
+                (60, 10),
+                (55, 20),
+                (80, 30)
             ], "#00f"),
             pantograph.CompoundShape([
                 pantograph.Rect(15, 15, 10, 10, "#0ff"),
@@ -55,6 +56,14 @@ class BouncingBallDemo(pantograph.PantographHandler):
         for shape in self.shapes:
             shape.update(self)
 
+        for (a, b) in itertools.combinations(self.shapes, 2):
+            if a.shape.intersects(b.shape):
+                xveltmp = a.xvel
+                yveltmp = a.yvel
+                a.xvel = b.xvel
+                a.yvel = b.yvel
+                b.xvel = xveltmp
+                b.yvel = yveltmp
 
 if __name__ == '__main__':
     app = pantograph.SimplePantographApplication(BouncingBallDemo)

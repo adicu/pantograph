@@ -14,7 +14,7 @@ the only dependency.
 import pantograph
 import random
 
-class BouncingBall(pantograph.PantographHandler):
+class BouncingBallDemo(pantograph.PantographHandler):
     def setup(self):
         self.x = 100
         self.y = 100
@@ -34,7 +34,7 @@ class BouncingBall(pantograph.PantographHandler):
         self.fill_circle(self.x, self.y, 10, "#f00")
 
 if __name__ == '__main__':
-    app = pantograph.SimplePantographApplication(BouncingBall)
+    app = pantograph.SimplePantographApplication(BouncingBallDemo)
     app.run()
 ```
 
@@ -148,6 +148,33 @@ The callbacks correspond directly to HTML DOM events.
 
  * `width` - The width of the canvas
  * `height` - The height of the canvas
+
+### Shape Objects
+
+Pantograph also provides a set of shape classes to represent your animation
+in an object oriented manner. The shape objects correspond to the `draw_*` 
+methods in the handler class.
+
+ * `Rect(x, y, width, height, fill_color=None, line_color=None)` - 
+ 	If no values are provided for `fill_color` or `line_color`, 
+	the fill or line will be transparent
+ * `Oval(x, y, width, height, fill_color=None, line_color=None)`
+ * `Circle(x, y, radius, fill_color=None, line_color=None)`
+ * `Image(img_name, x, y, width=None, height=None)`
+ * `Line(startx, starty, endx, endy, color = None)`
+ * `Polygon(points, fill_color=None, line_color=None)`
+ * `CompoundShape(shapes)` - `shapes` is a list of other shape objects
+
+#### Shape Methods
+
+ * `draw(canvas)` - Draw the shape on the `canvas`, which is an instance of
+   `PantographHandler`.
+ * `translate(dx, dy)` - Move the shape across the screen
+ * `rotate(theta)` - Rotate the shape to the angle `theta`, which is in 
+    radians. The angle `theta = 0` would be facing directly to the right,
+	and increases in the clockwise direction.
+ * `intersects(other)` - Determine if this shape intersects with the `other` shape
+ * `contains(other)` - Determine if this shape wholly encompasses the `other` shape
 
 ## Configuration
 

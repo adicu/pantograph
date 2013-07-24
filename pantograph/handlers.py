@@ -51,7 +51,7 @@ class PantographHandler(tornado.websocket.WebSocketHandler):
         self.width = message["width"]
         self.height = message["height"]
         self.setup()
-        self.draw("redraw")
+        self.do_operation("refresh")
         # randomize the first timeout so we don't get every timer
         # expiring at the same time
         interval = random.randint(1, self.interval)
@@ -79,51 +79,52 @@ class PantographHandler(tornado.websocket.WebSocketHandler):
                 "keypress": self.on_key_press
             }
             event_callbacks[event_type](InputEvent(**message))
-
-    def draw(self, operation, **kwargs):
-        message = dict(kwargs)
-        message['operation'] = operation
+    
+    def do_operation(self, operation, **kwargs):
+        message = dict(kwargs, operation=operation)
         raw_message = json.dumps(message)
         self.write_message(raw_message)
+    
+    def draw(self, shape_type, **kwargs):
+        shape = dict(kwargs, type=shape_type)
+        self.do_operation("draw", shape=shape)
 
     def draw_rect(self, x, y, width, height, color = "#000", **extra):
-        self.draw("drawRect", x=x, y=y, width=width, height=height, 
-                              color=color, **extra)
+        self.draw("rect", x=x, y=y, width=width, height=height, 
+                          lineColor=color, **extra)
 
     def fill_rect(self, x, y, width, height, color = "#000", **extra):
-        self.draw("fillRect", x=x, y=y, width=width, height=height, 
-                              color=color, **extra)
+        self.draw("rect", x=x, y=y, width=width, height=height, 
+                          fillColor=color, **extra)
 
     def clear_rect(self, x, y, width, height, **extra):
-        self.draw("clearRect", x=x, y=y, width=width, height=height,
-                               **extra)
+        self.draw("clear", x=x, y=y, width=width, height=height, **extra)
     
     def draw_oval(self, x, y, width, height, color = "#000", **extra):
-        self.draw("drawOval", x=x, y=y, width=width, height=height, 
-                              color=color, **extra)
+        self.draw("oval", x=x, y=y, width=width, height=height, 
+                          lineColor=color, **extra)
     
     def fill_oval(self, x, y, width, height, color = "#000", **extra):
-        self.draw("fillOval", x=x, y=y, width=width, height=height, 
-                              color=color, **extra)
+        self.draw("oval", x=x, y=y, width=width, height=height, 
+                          fillColor=color, **extra)
 
     def draw_circle(self, x, y, radius, color = "#000", **extra):
-        self.draw("drawCircle", x=x, y=y, radius=radius, 
-                                color=color, **extra)
+        self.draw("circle", x=x, y=y, radius=radius, 
+                            lineColor=color, **extra)
     
     def fill_circle(self, x, y, radius, color = "#000", **extra):
-        self.draw("fillCircle", x=x, y=y, radius=radius, 
-                                color=color, **extra)
+        self.draw("circle", x=x, y=y, radius=radius, 
+                           fillColor=color, **extra)
 
     def draw_line(self, startX, startY, endX, endY, color = "#000", **extra):
-        self.draw("drawLine", startX=startX, startY=startY, 
-                              endX=endX, endY=endY, color=color,
-                              **extra)
+        self.draw("line", startX=startX, startY=startY, 
+                          endX=endX, endY=endY, color=color, **extra)
 
     def fill_polygon(self, points, color = "#000", **extra):
-        self.draw("fillPolygon", points=points, color=color, **extra)
+        self.draw("polygon", points=points, fillColor=color, **extra)
     
     def draw_polygon(self, points, color = "#000", **extra):
-        self.draw("drawPolygon", points=points, color=color, **extra)
+        self.draw("polygon", points=points, lineColor=color, **extra)
 
     def draw_image(self, img_name, x, y, width=None, height=None, **extra):
         app_path = os.path.join("./images", img_name)
@@ -136,14 +137,13 @@ class PantographHandler(tornado.websocket.WebSocketHandler):
         else:
             raise FileNotFoundError("Could not find " + img_name)
         
-        self.draw("drawImage", src=img_src, x=x, y=y, 
-                               width=width, height=height,
-                               **extra)
+        self.draw("image", src=img_src, x=x, y=y, 
+                           width=width, height=height, **extra)
 
 
     def timer_tick(self):
         self.update()
-        self.draw("redraw")
+        self.do_operation("refresh")
         delta = datetime.timedelta(milliseconds = self.interval)
         self.timeout = IOLoop.current().add_timeout(delta, self.timer_tick)
 

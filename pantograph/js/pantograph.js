@@ -39,28 +39,33 @@ pantograph.redrawCanvas = function(mess, operation) {
 	});
 }
 
-pantograph.performCanvasOp = function(mess, operation) {
+pantograph.drawShape = function(shape) {
 	var ctx = pantograph.hiddenContext;
+	var operation = pantograph.shapeToFunc[shape["type"]];
+	if (operation === undefined) {
+		console.log("Could not find operation for shape " + shape["type"]);
+	}
 	reqAnimFrame(function () {
 		ctx.save();
-		if (mess.rotate) {
-			ctx.translate(mess.rotate.x, mess.rotate.y);
-			ctx.rotate(mess.rotate.theta);
-			ctx.translate(-mess.rotate.x, -mess.rotate.y);
+		if (shape.rotate) {
+			ctx.translate(shape.rotate.x, shape.rotate.y);
+			ctx.rotate(shape.rotate.theta);
+			ctx.translate(-shape.rotate.x, -shape.rotate.y);
 		}
-		operation(ctx, mess);
+		operation(ctx, shape);
 		ctx.restore();
 	});
 }
 
-pantograph.fillRect = function (ctx, rect) {
-	ctx.fillStyle = rect.color || "#000";
-	ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
-}
-
 pantograph.drawRect = function (ctx, rect) {
-	ctx.strokeStyle = rect.color || "#000";
-	ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
+	if (rect.lineColor) {
+		ctx.strokeStyle = rect.lineColor;
+		ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
+	}
+	if (rect.fillColor) {
+		ctx.fillStyle = rect.fillColor;
+		ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
+	}
 }
 
 pantograph.clearRect = function (ctx, rect) {
@@ -68,20 +73,19 @@ pantograph.clearRect = function (ctx, rect) {
 }
 
 pantograph.drawCircle = function(ctx, circle) {
-	ctx.strokeStyle = circle.color || "#000";
 	ctx.beginPath();
 	ctx.arc(circle.x, circle.y, circle.radius, 	0, 2 * Math.PI, true);
-	ctx.stroke();
+	if (circle.lineColor) {
+		ctx.strokeStyle = circle.lineColor;
+		ctx.stroke();
+	}
+	if (circle.fillColor) {
+		ctx.fillStyle = circle.fillColor;
+		ctx.fill();
+	}
 }
 
-pantograph.fillCircle = function(ctx, circle) {
-	ctx.fillStyle = circle.color || "#000";
-	ctx.beginPath();
-	ctx.arc(circle.x, circle.y, circle.radius, 	0, 2 * Math.PI, true);
-	ctx.fill();
-}
-
-pantograph.setupOval = function(ctx, oval) {
+pantograph.drawOval = function(ctx, oval) {
 	var x = oval.x + oval.width / 2;
 	var y = oval.y + oval.height / 2;
 
@@ -94,18 +98,16 @@ pantograph.setupOval = function(ctx, oval) {
 	ctx.arc(0, 0, 0.5, 0, 2 * Math.PI, true);
 	
 	ctx.restore();
-}
 
-pantograph.drawOval = function(ctx, oval) {
-	pantograph.setupOval(ctx, oval);
-	ctx.strokeStyle = oval.color || "#000";
-	ctx.stroke();
-}
+	if (oval.lineColor) {
+		ctx.strokeStyle = oval.lineColor;
+		ctx.stroke();
+	}
 
-pantograph.fillOval = function(ctx, oval) {
-	pantograph.setupOval(ctx, oval);
-	ctx.fillStyle = oval.color || "#000";
-	ctx.fill();
+	if (oval.fillColor) {
+		ctx.fillStyle = oval.fillColor;
+		ctx.fill();
+	}
 }
 
 pantograph.drawLine = function(ctx, line) {
@@ -116,7 +118,7 @@ pantograph.drawLine = function(ctx, line) {
 	ctx.stroke();
 }
 
-pantograph.setupPolygon = function(ctx, polygon) {
+pantograph.drawPolygon = function(ctx, polygon) {
 	var startX = polygon.points[0][0];
 	var startY = polygon.points[0][1];
 
@@ -128,18 +130,16 @@ pantograph.setupPolygon = function(ctx, polygon) {
 	});
 
 	ctx.lineTo(startX, startY);
-}
 
-pantograph.drawPolygon = function(ctx, polygon) {
-	pantograph.setupPolygon(ctx, polygon);
-	ctx.strokeStyle = polygon.color || "#000";
-	ctx.stroke();
-}
+	if (polygon.lineColor) {
+		ctx.strokeStyle = polygon.lineColor;
+		ctx.stroke();
+	}
 
-pantograph.fillPolygon = function(ctx, polygon) {
-	pantograph.setupPolygon(ctx, polygon);
-	ctx.fillStyle = polygon.color || "#000";
-	ctx.fill();
+	if (polygon.fillColor) {
+		ctx.fillStyle = polygon.fillColor;
+		ctx.fill();
+	}
 }
 
 pantograph.drawImage = function(ctx, imgInfo) {
@@ -150,6 +150,23 @@ pantograph.drawImage = function(ctx, imgInfo) {
 	var height = imgInfo.height || img.height;
 
 	ctx.drawImage(img, imgInfo.x, imgInfo.y, width, height);
+}
+
+pantograph.drawCompound = function(ctx, compound) {
+	compound.shapes.forEach(function (shp) {
+		pantograph.shapeToFunc[shp["type"]](ctx, shp);
+	});
+}
+
+pantograph.shapeToFunc = {
+	clear: pantograph.clearRect,
+	rect: pantograph.drawRect,
+	oval: pantograph.drawOval,
+	circle: pantograph.drawCircle,
+	image: pantograph.drawImage,
+	line: pantograph.drawLine,
+	polygon: pantograph.drawPolygon,
+	compound: pantograph.drawCompound
 }
 
 pantograph.socket.onopen = function(e) {
@@ -170,8 +187,8 @@ pantograph.socket.onopen = function(e) {
 
 pantograph.socket.onmessage = function(e) {
 	message = JSON.parse(e.data);
-	if (message.operation == "redraw")
+	if (message.operation == "refresh")
 		pantograph.redrawCanvas();
-	else
-		pantograph.performCanvasOp(message, pantograph[message.operation]);
+	else if (message.operation == "draw")
+		pantograph.drawShape(message["shape"]);
 }

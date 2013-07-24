@@ -8,9 +8,12 @@ class Shape(object):
         raise NotImplementedError
 
     def draw(self, canvas):
-        raise NotImplementedError
+        canvas.draw(self.shape_type(), **self.to_dict())
 
     def translate(self, dx, dy):
+        raise NotImplementedError
+
+    def to_dict(self):
         raise NotImplementedError
 
     def rotate(self, theta):
@@ -72,6 +75,9 @@ class Shape(object):
         return recta.left < rectb.left and recta.right > rectb.right and \
                 recta.top < rectb.top and recta.bottom > rectb.bottom
 
+    def shape_type(self):
+        return type(self).__name__.lower()
+
 
 class SimpleShape(Shape):
     def __init__(self, x, y, width, height, fill_color=None, line_color=None):
@@ -92,27 +98,17 @@ class SimpleShape(Shape):
         self.x += dx
         self.y += dy
 
+    def to_dict(self):
+        return dict(x = self.x, y = self.y,
+                    width = self.width, height = self.height,
+                    fillColor = self.fill_color, lineColor = self.line_color,
+                    rotate = self.rotation)
+        
 class Rect(SimpleShape):
-    def draw(self, canvas):
-        if self.fill_color is not None:
-            canvas.fill_rect(self.x, self.y, 
-                             self.width, self.height, 
-                             self.fill_color, rotate=self.rotation)
-        if self.line_color is not None:
-            canvas.draw_rect(self.x, self.y, 
-                             self.width, self.height, 
-                             self.line_color, rotate=self.rotation)
+    pass
     
 class Oval(SimpleShape):
-    def draw(self, canvas):
-        if self.fill_color is not None:
-            canvas.fill_oval(self.x, self.y, 
-                             self.width, self.height, 
-                             self.fill_color, rotate=self.rotation)
-        if self.line_color is not None:
-            canvas.draw_oval(self.x, self.y, 
-                             self.width, self.height, 
-                             self.line_color)
+    pass
 
 class Circle(SimpleShape):
     def __init__(self, x, y, radius, fill_color=None, line_color=None):
@@ -126,11 +122,9 @@ class Circle(SimpleShape):
         return BoundingRect(self.x - self.radius, self.y - self.radius,
                             self.x + self.radius, self.y + self.radius)
 
-    def draw(self, canvas):
-        if self.fill_color is not None:
-            canvas.fill_circle(self.x, self.y, self.radius, self.fill_color)
-        if self.line_color is not None:
-            canvas.draw_oval(self.x, self.y, self.radius, self.line_color)
+    def to_dict(self):
+        return dict(x = self.x, y = self.y, radius = self.radius,
+                    fillColor = self.fill_color, lineColor = self.line_color)
 
 class Image(SimpleShape):
     def __init__(self, img_name, x, y, width=None, height=None):
@@ -139,7 +133,8 @@ class Image(SimpleShape):
 
     def draw(self, canvas):
         canvas.draw_image(self.img_name, self.x, self.y, 
-                          self.width, self.height, rotate = self.rotation)
+                          self.width, self.height,
+                          rotate = self.rotation)
 
 class Line(Shape):
     def __init__(self, startx, starty, endx, endy, color = None):
@@ -149,10 +144,10 @@ class Line(Shape):
         self.endy = endy
         self.color = color
 
-    def draw(self, canvas):
-        if color is not None:
-            canvas.draw_line(self.startx, self.starty, self.endx, seld.endy, 
-                             rotate = self.rotation)
+    def to_dict(self):
+        return dict(startX = self.startx, startY = self.starty,
+                    endX = self.endx, endY = self.endy, 
+                    color = self.color, rotate = self.rotation)
 
     def get_bounding_rect(self):
         if self.startx < self.endx:
@@ -196,12 +191,11 @@ class Polygon(Shape):
 
         self.points = [Point(p.x + dx, p.y + dy) for p in self.points]
 
-    def draw(self, canvas):
-        if self.line_color is not None:
-            canvas.draw_polygon(self.points, self.line_color, rotate = self.rotation)
-        
-        if self.fill_color is not None:
-            canvas.fill_polygon(self.points, self.fill_color, rotate = self.rotation)
+    def to_dict(self):
+        return dict(points = self.points, 
+                    fillColor = self.fill_color,
+                    lineColor = self.line_color,
+                    rotate = self.rotation)
 
     def get_bounding_rect(self):
         return BoundingRect(self.minx, self.miny, self.maxx, self.maxy)
@@ -227,6 +221,10 @@ class CompoundShape(Shape):
     def get_bounding_rect(self):
         return BoundingRect(self.left, self.top, self.right, self.bottom)
 
-    def draw(self, canvas):
-        for shp in self.shapes:
-            shp.draw(canvas)
+    def to_dict(self):
+        return dict(shapes=[dict(shp.to_dict(), type=shp.shape_type()) 
+                            for shp in self.shapes],
+                    rotate = self.rotation)
+
+    def shape_type(self):
+        return "compound"

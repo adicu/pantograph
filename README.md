@@ -12,31 +12,38 @@ the only dependency.
 
 ```python
 import pantograph
-import random
+import math
 
-class BouncingBallDemo(pantograph.PantographHandler):
+# Animate a spinning wheel on the canvas 
+
+class Rotary(pantograph.PantographHandler):
     def setup(self):
-        self.x = 100
-        self.y = 100
-        self.xvel = random.randint(1, 5)
-        self.yvel = random.randint(1, 5)
-
+        self.angle = 0
+        self.radius = min(self.width, self.height) / 2
+    
     def update(self):
-        if self.x <= 0 or self.x >= self.width:
-            self.xvel *= -1
-        if self.y <= 0 or self.y >= self.height:
-            self.yvel *= -1
-
-        self.x += self.xvel
-        self.y += self.yvel
+        cx = self.radius
+        cy = self.radius
 
         self.clear_rect(0, 0, self.width, self.height)
-        self.fill_circle(self.x, self.y, 10, "#f00")
+        # draw the circle for the "rim" of the wheel
+        self.draw_circle(self.radius, self.radius, self.radius, "#f00")
+        
+        # draw eight evenly-spaced "spokes" from the center to the edge
+        for i in range(0, 8):
+            angle = self.angle + i * math.pi / 4
+            x = cx + self.radius * math.cos(angle)
+            y = cy + self.radius * math.sin(angle)
+            self.draw_line(cx, cy, x, y, "#f00")
 
+        self.angle += math.pi / 64
+    
 if __name__ == '__main__':
-    app = pantograph.SimplePantographApplication(BouncingBallDemo)
+    app = pantograph.SimplePantographApplication(Rotary)
     app.run()
 ```
+
+This program is located at "examples/rotary/start.py".
 
 ## API
 

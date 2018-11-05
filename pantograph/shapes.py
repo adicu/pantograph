@@ -60,8 +60,8 @@ class Shape(object):
     def contains(self, other):
         if isinstance(other, Point):
             rect = self.get_bounding_rect()
-            return rect.left < x and rect.right > x and \
-                    rect.top < y and rect.bottom > y
+            return rect.left < other.x and rect.right > other.x and \
+                    rect.top < other.y and rect.bottom > other.y
 
         recta = self.get_bounding_rect()
 

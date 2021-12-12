@@ -116,9 +116,9 @@ class PantographHandler(tornado.websocket.WebSocketHandler):
         self.draw("circle", x=x, y=y, radius=radius, 
                            fillColor=color, **extra)
 
-    def draw_line(self, startX, startY, endX, endY, color = "#000", **extra):
+    def draw_line(self, startX, startY, endX, endY, color = "#000", width = 1, **extra):
         self.draw("line", startX=startX, startY=startY, 
-                          endX=endX, endY=endY, color=color, **extra)
+                          endX=endX, endY=endY, color=color, width=width, **extra)
 
     def fill_polygon(self, points, color = "#000", **extra):
         self.draw("polygon", points=points, fillColor=color, **extra)

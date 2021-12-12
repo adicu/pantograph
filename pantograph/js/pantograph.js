@@ -112,6 +112,7 @@ pantograph.drawOval = function(ctx, oval) {
 
 pantograph.drawLine = function(ctx, line) {
 	ctx.beginPath();
+	ctx.lineWidth = line.width;
 	ctx.moveTo(line.startX, line.startY);
 	ctx.lineTo(line.endX, line.endY);
 	ctx.strokeStyle = line.color || "#000";
